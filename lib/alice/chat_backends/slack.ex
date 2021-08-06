@@ -70,3 +70,17 @@ def send_message(message, channel) do
 
     {:ok, state}
   end
+
+def handle_info(_message, _slack, state), do: {:ok, state}
+
+  defp handle_message(conn = %Conn{}) do
+    conn =
+      cond do
+        Earmuffs.blocked?(conn) -> Earmuffs.unblock(conn)
+        Conn.command?(conn) -> Router.match_commands(conn)
+        true -> Router.match_routes(conn)
+      end
+
+    {:ok, conn.state}
+  end
+end
