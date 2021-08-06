@@ -62,3 +62,11 @@ def send_message(message, channel) do
 
 # Ignore all others
   def handle_event(_message, _slack, state), do: {:ok, state}
+
+# Called when any other message is received in the process mailbox.
+  # Used to send message outside handlers
+  def handle_info({:message, text, channel}, slack, state) do
+    send_message(text, channel, slack)
+
+    {:ok, state}
+  end
