@@ -26,3 +26,13 @@ defp init_state do
   defp get_token do
     Application.get_env(:alice, :api_key)
   end
+
+def send_message(message, channel) do
+    send(__MODULE__, {:message, message, channel})
+    {:ok}
+  end
+
+  def handle_connect(slack, state) do
+    IO.puts("Connected to Slack as @#{slack.me.name}")
+    {:ok, state}
+  end
