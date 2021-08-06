@@ -36,3 +36,26 @@ def send_message(message, channel) do
     IO.puts("Connected to Slack as @#{slack.me.name}")
     {:ok, state}
   end
+
+# Ignore my own messages
+  def handle_event(%{user: id}, %{me: %{id: id}}, state), do: {:ok, state}
+
+  # Ignore subtypes
+  def handle_event(%{subtype: _}, _slack, state), do: {:ok, state}
+
+  # Handle messages from subscribed channels
+  def handle_event(message = %{type: "message"}, slack, state) do
+    try do
+      slack_users = Map.get(Slack.Web.Users.list(%{token: get_token()}), "members")
+      slack_data = Map.put(slack, :users, slack_users)
+
+      {message, slack_data, state}
+      |> Conn.make()
+      |> Conn.sanitize_message()
+      |> handle_message
+    rescue
+      error ->
+        IO.puts(Exception.format(:error, error))
+        {:ok, state}
+    end
+  end
