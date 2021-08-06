@@ -15,3 +15,14 @@ defmodule Alice.ChatBackends.Slack do
       %{name: __MODULE__}
     )
   end
+
+defp init_state do
+    case Application.get_env(:alice, :state_backend) do
+      :redis -> Redis.get_state()
+      _else -> %{}
+    end
+  end
+
+  defp get_token do
+    Application.get_env(:alice, :api_key)
+  end
