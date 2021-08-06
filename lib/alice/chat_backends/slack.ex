@@ -59,3 +59,6 @@ def send_message(message, channel) do
         {:ok, state}
     end
   end
+
+# Ignore all others
+  def handle_event(_message, _slack, state), do: {:ok, state}
