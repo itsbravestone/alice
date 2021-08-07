@@ -20,3 +20,20 @@ defmodule Alice.Handlers.Help do
     """
     |> reply(conn)
   end
+
+@doc """
+  `help all` - outputs the help text for each route in every handler
+  `help <handler name>` - outputs the help text for a single matching handler
+  """
+  def keyword_help(conn) do
+    keyword_help(conn, get_term(conn))
+  end
+
+  defp keyword_help(conn, "all") do
+    [
+      @pro_tip,
+      "_Here are all the routes and commands I know about…_"
+      | Enum.map(Router.handlers(), &help_for_handler/1)
+    ]
+    |> Enum.reduce(conn, &reply/2)
+  end
