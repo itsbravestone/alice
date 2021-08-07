@@ -37,3 +37,25 @@ defmodule Alice.Handlers.Help do
     ]
     |> Enum.reduce(conn, &reply/2)
   end
+
+defp keyword_help(conn, term) do
+    Router.handlers()
+    |> Enum.find(&(downcased_handler_name(&1) == term))
+    |> deliver_help(conn)
+  end
+
+  defp handler_list do
+    Router.handlers()
+    |> Enum.map(&handler_name/1)
+    |> Enum.sort()
+    |> Enum.map(&"> *#{&1}*")
+    |> Enum.join("\n")
+  end
+
+  defp get_term(conn) do
+    conn
+    |> Conn.last_capture()
+    |> String.downcase()
+    |> String.replace(~r/[_\s]+/, "")
+    |> String.trim()
+  end
