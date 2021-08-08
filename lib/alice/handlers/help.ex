@@ -105,3 +105,35 @@ defp deliver_help(handler, conn) do
   defp path_name(handler), do: handler |> to_string() |> path_name()
 
   defp format_routes(_title, [], _handler), do: nil
+  
+  defp format_routes(title, routes, handler) do
+    routes = Enum.map(routes, fn {_, name} -> name end)
+
+    docs =
+      handler
+      |> Code.fetch_docs()
+      |> parse_docs(title)
+      |> Enum.filter(fn {_, name, _} -> name in routes end)
+      |> Enum.map(&format_route/1)
+      |> compact()
+
+    Enum.join([">", "> *#{title}:*" | docs], "\n")
+  end
+
+  defp parse_docs({:docs_v1, _anno, _lang, _format, _mod_doc, _meta, docs}, title) do
+    Enum.map(docs, &parse_function_doc(&1, title))
+  end
+
+  defp parse_docs(_unmatching_doc_content, _title), do: []
+
+  defp parse_function_doc({{:function, name, _arity}, _anno, _sig, %{"en" => text}, _meta}, title) do
+    {title, name, text}
+  end
+
+  defp parse_function_doc({{:function, name, _arity}, _anno, _sig, :none, _meta}, title) do
+    {title, name, :none}
+  end
+
+  defp parse_function_doc({{:function, name, _arity}, _anno, _sig, :hidden, _meta}, title) do
+    {title, name, :hidden}
+  end
