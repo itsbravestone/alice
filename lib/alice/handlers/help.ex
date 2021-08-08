@@ -137,3 +137,28 @@ defp deliver_help(handler, conn) do
   defp parse_function_doc({{:function, name, _arity}, _anno, _sig, :hidden, _meta}, title) do
     {title, name, :hidden}
   end
+
+defp format_route({_, _, :hidden}), do: nil
+
+  defp format_route({title, name, text}) do
+    [">    _#{name}_", format_text(text, title)]
+    |> Enum.join("\n")
+  end
+
+  defp format_text(:none, _title) do
+    ">        _no documentation provided_"
+  end
+
+  defp format_text(text, title) do
+    text
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(fn line -> ">        #{prefix_command(title, line)}" end)
+    |> Enum.join("\n")
+  end
+
+  defp prefix_command("Commands", "`" <> line), do: "`@alice #{line}"
+  defp prefix_command(_, line), do: line
+
+  defp compact(list), do: list |> Enum.reject(&is_nil/1)
+end
