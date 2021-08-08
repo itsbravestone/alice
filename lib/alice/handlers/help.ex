@@ -59,3 +59,23 @@ defp keyword_help(conn, term) do
     |> String.replace(~r/[_\s]+/, "")
     |> String.trim()
   end
+
+defp handler_name(handler) do
+    handler
+    |> to_string()
+    |> String.split(".")
+    |> Enum.reverse()
+    |> hd
+  end
+
+  defp downcased_handler_name(handler) do
+    handler
+    |> handler_name()
+    |> String.downcase()
+  end
+
+  defp deliver_help(nil, conn) do
+    ~s(I can't find a handler matching "#{get_term(conn)}")
+    |> reply(conn)
+    |> general_help()
+  end
