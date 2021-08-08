@@ -79,3 +79,29 @@ defp handler_name(handler) do
     |> reply(conn)
     |> general_help()
   end
+
+defp deliver_help(handler, conn) do
+    [
+      @pro_tip,
+      ~s(_Here are all the routes and commands I know for "#{get_term(conn)}"_),
+      help_for_handler(handler)
+    ]
+    |> Enum.join("\n\n")
+    |> reply(conn)
+  end
+
+  def help_for_handler(handler) do
+    [
+      ">*#{path_name(handler)}*",
+      format_routes("Routes", handler.routes, handler),
+      format_routes("Commands", handler.commands, handler),
+      ""
+    ]
+    |> compact()
+    |> Enum.join("\n")
+  end
+
+  defp path_name("Elixir." <> name), do: name
+  defp path_name(handler), do: handler |> to_string() |> path_name()
+
+  defp format_routes(_title, [], _handler), do: nil
