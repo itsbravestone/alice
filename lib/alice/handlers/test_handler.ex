@@ -21,3 +21,19 @@ defmodule Alice.Handlers.TestHandler do
   also this one is multiline
   """
   def command2(_conn), do: nil
+
+@doc """
+  this one doesn't start with an
+  example so no @alice is added
+  """
+  def command3(_conn), do: nil
+
+  def no_docs(_conn), do: nil
+
+  @doc """
+  this function should not
+  appear in help because it's
+  not a route or command
+  """
+  def another_func, do: nil
+end
