@@ -26,3 +26,11 @@ defmodule Alice.Handlers.Utils do
     |> reply("#{total} - #{process}")
   end
   
+def bytes_to_megabytes(bytes) do
+    Float.round(bytes / :math.pow(1024, 2), 2)
+  end
+
+  defp alice_version, do: alice_version(Application.loaded_applications())
+  defp alice_version([{:alice, _desc, version} | _apps]), do: version
+  defp alice_version([]), do: "Unknown Version"
+  defp alice_version([_app | apps]), do: alice_version(apps)
