@@ -34,3 +34,22 @@ def bytes_to_megabytes(bytes) do
   defp alice_version([{:alice, _desc, version} | _apps]), do: version
   defp alice_version([]), do: "Unknown Version"
   defp alice_version([_app | apps]), do: alice_version(apps)
+
+@doc "`debug state` - the current state data for debugging"
+  def debug_state(conn), do: conn.state |> inspect |> format_code |> reply(conn)
+
+  @doc "`debug slack` - the current slack data for debugging"
+  def debug_slack(conn), do: conn.slack |> inspect |> format_code |> reply(conn)
+
+  @doc "`debug conn` - the current conn data for debugging"
+  def debug_conn(conn), do: conn |> inspect |> format_code |> reply(conn)
+
+  # Formats code for Slack
+  defp format_code(code) do
+    """
+    ```
+    #{code}
+    ```
+    """
+  end
+end
