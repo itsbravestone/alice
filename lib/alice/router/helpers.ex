@@ -101,3 +101,21 @@ defp chance_reply(conn, {false, _, :noreply}), do: conn
       conn
     end)
   end
+
+defp forward_message(pid, name) do
+    receive do
+      {^name, payload} -> send(pid, {name, payload})
+    after
+      0 -> nil
+    end
+  end
+
+  @doc """
+  Indicate typing.
+  """
+  @spec indicate_typing(%Conn{}) :: %Conn{}
+  def indicate_typing(conn = %Conn{message: %{channel: chan}, slack: slack}) do
+    outbound_api().indicate_typing(chan, slack)
+    conn
+  end
+end
