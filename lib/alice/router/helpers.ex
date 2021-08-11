@@ -59,3 +59,45 @@ def reply(conn = %Conn{message: %{channel: channel}, slack: slack}, resp) do
     success? = :rand.uniform() <= chance
     chance_reply(conn, {success?, positive, negative})
   end
+
+defp chance_reply(conn, {false, _, :noreply}), do: conn
+  defp chance_reply(conn, {false, _, resp}), do: reply(conn, resp)
+  defp chance_reply(conn, {true, resp, _}), do: reply(conn, resp)
+
+  @doc """
+  Delay a reply. Alice will show to be typing while the message is delayed.
+  The conn can be passed in first or last.
+  Returns the task, not a conn. If you need to get the conn, you can
+  use `Task.await(task)`, but this will block the handle process until the delay
+  finishes. If you don't need the updated conn, simply return the conn that was
+  passed to delayed_reply.
+  Examples
+      def hello(conn) do
+        "hello" |> delayed_reply(1000, conn)
+        conn
+      end
+      def hello(conn) do
+        task = delayed_reply(conn, "hello", 1000)
+        # other work...
+        Task.await(task)
+      end
+  """
+  @spec delayed_reply(%Conn{}, String.t(), integer()) :: Task.t()
+  @spec delayed_reply(String.t(), integer(), %Conn{}) :: Task.t()
+  def delayed_reply(msg, ms, conn = %Conn{}), do: delayed_reply(conn, msg, ms)
+
+  def delayed_reply(conn = %Conn{}, message, milliseconds) do
+    parent = self()
+
+    Task.async(fn ->
+      conn = indicate_typing(conn)
+      forward_message(parent, :indicate_typing)
+
+      :timer.sleep(milliseconds)
+
+      conn = reply(conn, message)
+      forward_message(parent, :send_message)
+
+      conn
+    end)
+  end
