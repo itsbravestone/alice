@@ -47,3 +47,15 @@ def reply(conn = %Conn{message: %{channel: channel}, slack: slack}, resp) do
   @spec random_reply(%Conn{}, list()) :: %Conn{}
   def random_reply(list, conn = %Conn{}), do: random_reply(conn, list)
   def random_reply(conn = %Conn{}, list), do: list |> Enum.random() |> reply(conn)
+
+ @doc """
+  Reply with random chance.
+  Examples
+      > chance_reply(conn, 0.5, "sent half the time")
+      > chance_reply(conn, 0.25, "sent 25% of the time", "sent 75% of the time")
+  """
+  @spec chance_reply(%Conn{}, float(), String.t(), String.t() | :noreply) :: %Conn{}
+  def chance_reply(conn = %Conn{}, chance, positive, negative \\ :noreply) do
+    success? = :rand.uniform() <= chance
+    chance_reply(conn, {success?, positive, negative})
+  end
