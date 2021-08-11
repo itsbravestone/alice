@@ -35,3 +35,15 @@ def reply(conn = %Conn{message: %{channel: channel}, slack: slack}, resp) do
     conn
   end
   
+  defp outbound_api do
+    Application.get_env(:alice, :outbound_client, Alice.ChatBackends.SlackOutbound)
+  end
+
+  @doc """
+  Takes a conn and a list of possible response in any order.
+  Replies with a random element of the `list` provided.
+  """
+  @spec random_reply(list(), %Conn{}) :: %Conn{}
+  @spec random_reply(%Conn{}, list()) :: %Conn{}
+  def random_reply(list, conn = %Conn{}), do: random_reply(conn, list)
+  def random_reply(conn = %Conn{}, list), do: list |> Enum.random() |> reply(conn)
