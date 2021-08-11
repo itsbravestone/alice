@@ -26,3 +26,12 @@ def reply(conn = %Conn{message: %{channel: channel, thread_ts: thread}, slack: s
 
     conn
   end
+
+def reply(conn = %Conn{message: %{channel: channel}, slack: slack}, resp) do
+    resp
+    |> Alice.Images.uncache()
+    |> outbound_api().send_message(channel, slack)
+
+    conn
+  end
+  
