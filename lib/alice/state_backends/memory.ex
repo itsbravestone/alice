@@ -15,3 +15,25 @@ defimpl MemoryValue, for: Date do
   defimpl MemoryValue, for: Any do
     def convert(value), do: value
   end
+
+@doc """
+  Gets an item from memory store
+  """
+  def get(map, key, default \\ nil) do
+    Map.get(map, key, default)
+  end
+
+  @doc """
+  Adds an item to memory store
+  """
+  def put(map, key, value) do
+    Map.put(map, key, MemoryValue.convert(value))
+  end
+
+  @doc """
+  Removes an item from memory store
+  """
+  def delete(map, key) do
+    Map.delete(map, key)
+  end
+end
