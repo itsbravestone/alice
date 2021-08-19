@@ -28,3 +28,17 @@ defp migrate_redis! do
     |> RedixPool.command!()
     |> handle_get_result(default)
   end
+
+defp handle_get_result(nil, default), do: default
+
+@dialyzer {:nowarn_function, handle_get_result: 2}
+  defp handle_get_result(encoded_value, _default) do
+    case Poison.decode(encoded_value) do
+      {:ok, decoded_value} ->
+        decoded_value
+
+      _ ->
+        {decoded, _} = Code.eval_string(encoded_value)
+        decoded
+    end
+  end
