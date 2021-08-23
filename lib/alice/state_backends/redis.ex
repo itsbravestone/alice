@@ -52,3 +52,14 @@ def put(state, key, value) do
     RedixPool.command!(["DEL", encode_key(key)])
     Map.delete(state, key)
   end
+
+def get_state do
+    migrate_redis()
+    do_get_state()
+  end
+
+  defp do_get_state do
+    keys()
+    |> Stream.map(fn key -> {key, get(:redis, key)} end)
+    |> Enum.into(%{})
+  end
