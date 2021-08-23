@@ -63,3 +63,13 @@ def get_state do
     |> Stream.map(fn key -> {key, get(:redis, key)} end)
     |> Enum.into(%{})
   end
+
+defp keys do
+    ["KEYS", "*|Alice.State"]
+    |> RedixPool.command!()
+    |> Enum.map(&decode_key/1)
+  end
+
+  defp encode_key(key) do
+    inspect(key) <> "|Alice.State"
+  end
