@@ -42,3 +42,13 @@ defp handle_get_result(nil, default), do: default
         decoded
     end
   end
+
+def put(state, key, value) do
+    RedixPool.command!(["SET", encode_key(key), Poison.encode!(value)])
+    Map.put(state, key, value)
+  end
+
+  def delete(state, key) do
+    RedixPool.command!(["DEL", encode_key(key)])
+    Map.delete(state, key)
+  end
