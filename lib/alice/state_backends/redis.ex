@@ -73,3 +73,10 @@ defp keys do
   defp encode_key(key) do
     inspect(key) <> "|Alice.State"
   end
+
+defp decode_key(key) do
+    [key | _] = String.split(key, "|Alice.State")
+    {key, _} = Code.eval_string(key)
+    key
+  end
+end
