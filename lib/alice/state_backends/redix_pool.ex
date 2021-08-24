@@ -14,3 +14,12 @@ defmodule Alice.StateBackends.RedixPool do
       size: 10,
       max_overflow: 5
     ]
+
+redis_connection_params = Application.get_env(:alice, :redis)
+
+    children = [
+      :poolboy.child_spec(:redix_poolboy, pool_opts, redis_connection_params)
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
