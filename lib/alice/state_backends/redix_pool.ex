@@ -23,3 +23,12 @@ redis_connection_params = Application.get_env(:alice, :redis)
 
     Supervisor.init(children, strategy: :one_for_one)
   end
+
+def command!(command) do
+    :poolboy.transaction(:redix_poolboy, &Redix.command!(&1, command))
+  end
+
+  def pipeline!(commands) do
+    :poolboy.transaction(:redix_poolboy, &Redix.pipeline!(&1, commands))
+  end
+end
