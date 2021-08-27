@@ -26,3 +26,16 @@ defmodule Alice.HandlerCase do
       end
   """
   
+   @spec fake_conn() :: conn()
+  def fake_conn(), do: fake_conn("")
+
+  @doc """
+  Generates a fake connection for testing purposes.
+  Can be called as `fake_conn/1` to pass a message.
+  ## Examples
+      test "you can set the message in the conn" do
+        conn = fake_conn("message")
+        send_message(conn)
+        assert first_reply() == "hello world"
+      end
+  """
