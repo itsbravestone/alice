@@ -13,3 +13,16 @@ defmodule Alice.HandlerCase do
         end
       end
   """
+@type conn() :: %Alice.Conn{}
+
+  @doc """
+  Generates a fake connection for testing purposes.
+  Can be called as `fake_conn/0` to generate a quick connection.
+  ## Examples
+      test "you can directly use the reply function" do
+        conn = fake_conn()
+        reply(conn, "hello world")
+        assert first_reply() == "hello world"
+      end
+  """
+  
