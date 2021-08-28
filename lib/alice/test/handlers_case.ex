@@ -39,3 +39,18 @@ defmodule Alice.HandlerCase do
         assert first_reply() == "hello world"
       end
   """
+@spec fake_conn(String.t()) :: conn()
+  def fake_conn(text) do
+    %Alice.Conn{
+      message: %{text: text, channel: :channel, user: "fake_user_id"},
+      slack: fake_slack("fake_user"),
+      state: %{}
+    }
+  end
+
+  @spec fake_conn_with_thread(String.t(), String.t()) :: conn()
+  def fake_conn_with_thread(thread \\ "fake thread", text \\ "") do
+    conn = %{message: message} = fake_conn(text)
+    message = Map.put(message, :thread_ts, thread)
+    Map.put(conn, :message, message)
+  end
