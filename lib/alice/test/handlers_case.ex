@@ -54,3 +54,21 @@ defmodule Alice.HandlerCase do
     message = Map.put(message, :thread_ts, thread)
     Map.put(conn, :message, message)
   end
+@doc """
+  Generates a fake connection for testing purposes.
+  Can be called as `fake_conn/2` to set options. Options can either be `:state`
+  or `:capture`, but not both. Using `:capture` is helpful if you want to unit
+  test your handler functions.
+  ## Examples
+      test "you can set state" do
+        conn = fake_conn("message", state: %{some: "state"})
+        conn = send_message(conn)
+        assert first_reply() == "hello world"
+        assert conn.state.some == "state"
+      end
+      test "you can set the regix and call the handler directly" do
+        conn = fake_conn("message", ~r"^(.+)")
+        MyHandler.do_something(conn)
+        assert first_reply() == "hello world, you said 'message'"
+      end
+  """
