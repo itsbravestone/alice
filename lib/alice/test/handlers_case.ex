@@ -83,3 +83,28 @@ defmodule Alice.HandlerCase do
     |> fake_conn()
     |> Alice.Conn.add_captures(capture_regex)
   end
+
+defp fake_slack(name) do
+    %{
+      me: %{id: "alice"},
+      users: [
+        %{"id" => "alice", "name" => "alice"},
+        %{"id" => name, "name" => name}
+      ]
+    }
+  end
+
+  @doc """
+    Sends a message through Alice that can be captured by the handlers.
+    Can either be called with a message `String` or `Alice.Conn`
+    ## Examples
+        test "it sends a message" do
+          send_message("test message")
+          assert first_reply() == "reply from handler"
+        end
+        test "it sends a message with a conn" do
+          conn = fake_conn("test message")
+          send_message(conn)
+          assert first_reply() == "reply from handler"
+        end
+  """
