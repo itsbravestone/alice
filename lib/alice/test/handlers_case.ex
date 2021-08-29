@@ -72,3 +72,14 @@ defmodule Alice.HandlerCase do
         assert first_reply() == "hello world, you said 'message'"
       end
   """
+
+@spec fake_conn(String.t(), opts :: [state: map()] | [capture: Regex.t()]) :: conn()
+  def fake_conn(text, state: state) do
+    %{fake_conn(text) | state: state}
+  end
+
+  def fake_conn(text, capture: capture_regex) do
+    text
+    |> fake_conn()
+    |> Alice.Conn.add_captures(capture_regex)
+  end
