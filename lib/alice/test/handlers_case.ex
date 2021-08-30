@@ -122,3 +122,27 @@ defp fake_slack(name) do
     |> fake_conn()
     |> send_message()
   end
+
+@doc """
+  Retrieves a `List` of all the replies that Alice has sent out since the test began.
+  ## Examples
+      test "you can send multiple messages" do
+        send_message("first")
+        send_message("second")
+        assert all_replies() == ["first", "second"]
+      end
+  """
+  @spec all_replies() :: [String.t()]
+  def all_replies() do
+    message =
+      receive do
+        {:send_message, %{response: message}} -> message
+      after
+        0 -> :no_message_received
+      end
+
+    case message do
+      :no_message_received -> []
+      message -> [message | all_replies()]
+    end
+  end
