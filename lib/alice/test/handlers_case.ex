@@ -108,3 +108,17 @@ defp fake_slack(name) do
           assert first_reply() == "reply from handler"
         end
   """
+
+@spec send_message(String.t() | conn()) :: conn()
+  def send_message(conn = %Alice.Conn{}) do
+    case Alice.Conn.command?(conn) do
+      true -> Alice.Router.match_commands(conn)
+      false -> Alice.Router.match_routes(conn)
+    end
+  end
+
+  def send_message(message) do
+    message
+    |> fake_conn()
+    |> send_message()
+  end
