@@ -146,3 +146,20 @@ defp fake_slack(name) do
       message -> [message | all_replies()]
     end
   end
+
+@doc """
+  Retrieves the first reply that Alice sent out since the test began.
+  ## Examples
+      test "it only brings back the first message" do
+        send_message("first")
+        send_message("second")
+        assert first_reply() == "first"
+      end
+  """
+  @spec first_reply() :: String.t()
+  def first_reply() do
+    case all_replies() do
+      [first_message | _] -> first_message
+      _ -> nil
+    end
+  end
