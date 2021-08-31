@@ -163,3 +163,20 @@ defp fake_slack(name) do
       _ -> nil
     end
   end
+
+@doc """
+  Verifies that typing was indicated during the test.
+  ## Examples
+      test "the handler indicated typing" do
+        send_message("message that causes the handler to indicate typing")
+        assert typing?
+      end
+  """
+  @spec typing?() :: boolean()
+  def typing?() do
+    receive do
+      {:indicate_typing, _} -> true
+    after
+      0 -> false
+    end
+  end
