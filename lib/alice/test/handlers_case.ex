@@ -180,3 +180,24 @@ defp fake_slack(name) do
       0 -> false
     end
   end
+
+defmacro __using__(opts \\ []) do
+    Application.put_env(:alice, :outbound_client, Alice.ChatBackends.OutboundSpy)
+
+    handlers =
+      opts
+      |> Keyword.get(:handlers, [])
+      |> List.wrap()
+
+    quote do
+      use ExUnit.Case
+      import Alice.HandlerCase
+
+      setup do
+        Alice.Router.start_link(unquote(handlers))
+
+        :ok
+      end
+    end
+  end
+end
