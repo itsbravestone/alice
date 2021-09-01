@@ -25,3 +25,10 @@ defmodule Alice.ChatBackends.OutboundSpy do
 
     :ok
   end
+@doc "Sends a message indicating typing back to the process so it can be retrieved later during the test"
+  @spec indicate_typing(channel :: String.t(), slack :: map()) :: :ok
+  def indicate_typing(channel, slack) do
+    send(self(), {:indicate_typing, %{channel: channel, slack: slack}})
+    :ok
+  end
+end
