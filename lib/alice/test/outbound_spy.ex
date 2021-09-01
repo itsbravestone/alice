@@ -10,3 +10,18 @@ defmodule Alice.ChatBackends.OutboundSpy do
     send(self(), {:send_message, %{response: message, channel: channel, slack: slack}})
     :ok
   end
+
+@spec send_message(
+          message :: String.t(),
+          channel :: String.t(),
+          slack :: map(),
+          thread :: String.t()
+        ) :: :ok
+  def send_message(message, channel, slack, thread) do
+    send(
+      self(),
+      {:send_message, %{response: message, channel: channel, slack: slack, thread: thread}}
+    )
+
+    :ok
+  end
