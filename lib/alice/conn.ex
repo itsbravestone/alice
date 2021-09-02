@@ -25,3 +25,18 @@ defmodule Alice.Conn do
   def make(message, slack, state \\ %{}) do
     make({message, slack, state})
   end
+
+ @doc """
+  Returns a boolean depending on whether or
+  not the incoming message is a command
+  """
+  def command?(conn = %Conn{}) do
+    String.contains?(conn.message.text, "<@#{conn.slack.me.id}>")
+  end
+
+  @doc """
+  Returns the name of the user for the incoming message
+  """
+  def user(conn = %Conn{}) do
+    user_data(conn)["name"]
+  end
