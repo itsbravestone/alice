@@ -54,3 +54,14 @@ defmodule Alice.Conn do
   def timestamp(conn = %Conn{}) do
     conn.message.ts
   end
+
+ @doc """
+  Builds a string to use as an @reply back to the user who sent the message
+  """
+  def at_reply_user(conn = %Conn{}) do
+    "<@#{user_data(conn)["id"]}>"
+  end
+
+  defp user_data(%Conn{message: %{user: id}, slack: %{users: users}}) do
+    Enum.find(users, &(&1["id"] == id))
+  end
