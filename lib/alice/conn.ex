@@ -65,3 +65,18 @@ defmodule Alice.Conn do
   defp user_data(%Conn{message: %{user: id}, slack: %{users: users}}) do
     Enum.find(users, &(&1["id"] == id))
   end
+@doc """
+  Used internally to add the regex captures to the `message`
+  """
+  def add_captures(conn = %Conn{}, pattern) do
+    conn.message
+    |> Map.put(:captures, Regex.run(pattern, conn.message.text))
+    |> make(conn.slack, conn.state)
+  end
+
+  @doc """
+  Get the last capture from the `conn`
+  """
+  def last_capture(%Conn{message: %{captures: captures}}) do
+    captures |> Enum.reverse() |> hd
+  end
