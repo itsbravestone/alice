@@ -80,3 +80,13 @@ defmodule Alice.Conn do
   def last_capture(%Conn{message: %{captures: captures}}) do
     captures |> Enum.reverse() |> hd
   end
+
+@doc """
+  Used internally to sanitize the incoming message text
+  """
+  def sanitize_message(conn = %Conn{message: message = %{text: text}}) do
+    message
+    |> Map.put(:original_text, text)
+    |> Map.put(:text, sanitize_text(text))
+    |> make(conn.slack, conn.state)
+  end
