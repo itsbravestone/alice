@@ -90,3 +90,17 @@ defmodule Alice.Conn do
     |> Map.put(:text, sanitize_text(text))
     |> make(conn.slack, conn.state)
   end
+
+defp sanitize_text(text) do
+    text
+    |> remove_smart_quotes
+    |> remove_formatted_emails
+    |> remove_formatted_urls
+  end
+
+  defp remove_smart_quotes(text) do
+    text
+    |> String.replace(~s(“), ~s("))
+    |> String.replace(~s(”), ~s("))
+    |> String.replace(~s(’), ~s('))
+  end
