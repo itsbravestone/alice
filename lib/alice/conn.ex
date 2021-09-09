@@ -104,3 +104,11 @@ defp sanitize_text(text) do
     |> String.replace(~s(”), ~s("))
     |> String.replace(~s(’), ~s('))
   end
+
+defp remove_formatted_emails(text) do
+    text |> String.replace(~r/<mailto:([^|]+)[^\s]*>/i, "\\1")
+  end
+
+  defp remove_formatted_urls(text) do
+    text |> String.replace(~r/<([^|@]+)([^\s]*)?>/, "\\1")
+  end
