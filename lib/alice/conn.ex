@@ -112,3 +112,18 @@ defp remove_formatted_emails(text) do
   defp remove_formatted_urls(text) do
     text |> String.replace(~r/<([^|@]+)([^\s]*)?>/, "\\1")
   end
+
+@doc """
+  Used internally to get namespaced state
+  """
+  def get_state_for(conn = %Conn{}, namespace, default \\ nil) do
+    state_backend().get(conn.state, namespace, default)
+  end
+
+  @doc """
+  Used internally to put namespaced state
+  """
+  def put_state_for(conn = %Conn{}, namespace, value) do
+    new_state = state_backend().put(conn.state, namespace, value)
+    make(conn.message, conn.slack, new_state)
+  end
