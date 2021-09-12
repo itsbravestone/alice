@@ -127,3 +127,19 @@ defp remove_formatted_emails(text) do
     new_state = state_backend().put(conn.state, namespace, value)
     make(conn.message, conn.slack, new_state)
   end
+  
+  @doc """
+  Used internally to delete namespaced state
+  """
+  def delete_state_for(conn = %Conn{}, namespace) do
+    new_state = state_backend().delete(conn.state, namespace)
+    make(conn.message, conn.slack, new_state)
+  end
+
+  defp state_backend do
+    case Application.get_env(:alice, :state_backend) do
+      :redis -> Alice.StateBackends.Redis
+      _other -> Alice.StateBackends.Memory
+    end
+  end
+end
